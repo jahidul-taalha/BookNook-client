@@ -18,6 +18,7 @@ import {
   UserRoundIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { RelatedBooks } from "@/components/books/related-books";
 import { FadeIn } from "@/components/motion/fade-in";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Container } from "@/components/site/container";
@@ -199,6 +200,7 @@ export function BookDetails({ id }: { id: string }) {
       ) : null}
 
       {status === "ready" && book ? (
+        <>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
           <FadeIn>
             <div className="relative">
@@ -354,6 +356,8 @@ export function BookDetails({ id }: { id: string }) {
             ) : null}
           </FadeIn>
         </div>
+        <RelatedBooks category={book.category} currentId={book._id} />
+        </>
       ) : null}
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
