@@ -12,6 +12,7 @@ import {
   LogOutIcon,
   MenuIcon,
   ShieldCheckIcon,
+  UserIcon,
   UserPlusIcon,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -56,7 +57,7 @@ const PUBLIC_LINKS = [
 
 const MEMBER_LINKS = [
   { href: "/my-borrows", label: "My Borrows", icon: BookMarkedIcon },
-  { href: "/manage-books", label: "Manage Books", icon: ShieldCheckIcon },
+  { href: "/my-books", label: "My Books", icon: ShieldCheckIcon },
 ] as const;
 
 export function Navbar() {
@@ -159,6 +160,10 @@ export function Navbar() {
                     </span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem render={<Link href="/profile" />}>
+                    <UserIcon />
+                    Profile
+                  </DropdownMenuItem>
                   <DropdownMenuItem render={<Link href="/add-book" />}>
                     <BookPlusIcon />
                     Add a book
@@ -167,9 +172,9 @@ export function Navbar() {
                     <BookMarkedIcon />
                     My borrows
                   </DropdownMenuItem>
-                  <DropdownMenuItem render={<Link href="/manage-books" />}>
+                  <DropdownMenuItem render={<Link href="/my-books" />}>
                     <ShieldCheckIcon />
-                    Manage books
+                    My books
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -262,19 +267,24 @@ export function Navbar() {
                 <div className="mt-4 space-y-2">
                   {user ? (
                     <>
-                      <div className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-3">
+                      <Link
+                        href="/profile"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-3 transition-colors hover:border-primary/30 hover:bg-secondary/40"
+                      >
                         <Avatar>
                           <AvatarFallback className="bg-primary text-primary-foreground">
                             {initials(user.name)}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold">{user.name}</p>
                           <p className="truncate text-xs text-muted-foreground">
                             {user.email}
                           </p>
                         </div>
-                      </div>
+                        <UserIcon className="size-4 shrink-0 text-muted-foreground" />
+                      </Link>
                       <Button
                         className="w-full"
                         render={<Link href="/add-book" />}

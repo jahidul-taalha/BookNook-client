@@ -64,8 +64,9 @@ loading before it redirects, so the same flow will work with a real session.
 | `/books/[id]` | Book details, borrow action, and owner actions |
 | `/books/[id]/edit` | Edit a book you shared |
 | `/add-book` | Add a book with cover upload or URL |
-| `/manage-books` | Dashboard for books you shared |
+| `/my-books` | Dashboard for books you shared |
 | `/my-borrows` | Active and returned borrows |
+| `/profile` | Library card and account details |
 | `/login` | Sign in |
 | `/register` | Create a library card |
 

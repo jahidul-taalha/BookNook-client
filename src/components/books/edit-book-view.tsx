@@ -51,11 +51,11 @@ export function EditBookView({ id }: { id: string }) {
   return (
     <Container className="space-y-8 py-10 sm:py-14">
       <Link
-        href={book ? `/books/${book._id}` : "/manage-books"}
+        href={book ? `/books/${book._id}` : "/my-books"}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
       >
         <ArrowLeftIcon className="size-4" />
-        {book ? "Back to book" : "Back to manage books"}
+        {book ? "Back to book" : "Back to my books"}
       </Link>
 
       {status === "loading" ? <EditSkeleton /> : null}
@@ -85,7 +85,7 @@ export function EditBookView({ id }: { id: string }) {
         <>
           <FadeIn>
             <PageHeader
-              eyebrow="Manage books"
+              eyebrow="My books"
               title="Edit Book"
               description={`Update the details for “${book.title}”. Changes are visible to every borrower straight away.`}
             />

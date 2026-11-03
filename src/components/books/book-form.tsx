@@ -173,7 +173,7 @@ export function BookForm({ mode, book }: BookFormProps) {
         toast.success("Book added to the shelves", {
           description: `“${trimmedTitle}” is ready for its first borrower.`,
         });
-        router.push(created?._id ? `/books/${created._id}` : "/manage-books");
+        router.push(created?._id ? `/books/${created._id}` : "/my-books");
       }
     } catch (error) {
       toast.error(

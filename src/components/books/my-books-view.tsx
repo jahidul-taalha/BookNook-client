@@ -37,7 +37,7 @@ import { formatDate } from "@/lib/format";
 import type { Book } from "@/lib/types";
 import { cn } from "cn";
 
-export function ManageBooksView() {
+export function MyBooksView() {
   const { user, token } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -112,7 +112,7 @@ export function ManageBooksView() {
         <FadeIn>
           <PageHeader
             eyebrow="Your shelf"
-            title="Manage Books"
+            title="My Books"
             description="Keep the books you've shared up to date, and take one off the shelves when it's time to pass it on elsewhere."
             action={
               <Button render={<Link href="/add-book" />}>

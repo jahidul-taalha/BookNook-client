@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { ManageBooksView } from "@/components/books/manage-books-view";
+import { MyBooksView } from "@/components/books/my-books-view";
 import { ProtectedRoute } from "@/components/site/protected-route";
 
 export const metadata: Metadata = {
-  title: "BookNook | Manage Books",
+  title: "BookNook | My Books",
   description:
     "Edit or remove the books you've shared with the BookNook shelves.",
 };
 
-export default function ManageBooksPage() {
+export default function MyBooksPage() {
   return (
     <ProtectedRoute label="Fetching your shelf…">
-      <ManageBooksView />
+      <MyBooksView />
     </ProtectedRoute>
   );
 }

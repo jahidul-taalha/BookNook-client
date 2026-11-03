@@ -44,5 +44,5 @@ Local demo auth provider stores a session token/user in localStorage and provide
 never redirect until the session has finished loading. Replace with the real backend JWT when available.
 
 ## Routes
-`/`, `/books`, `/books/[id]`, `/books/[id]/edit`, `/add-book`, `/manage-books`, `/my-borrows`, `/login`, `/register`.
+`/`, `/books`, `/books/[id]`, `/books/[id]/edit`, `/add-book`, `/my-books`, `/my-borrows`, `/profile`, `/login`, `/register`.
 Page titles follow `BookNook | <Page>`.

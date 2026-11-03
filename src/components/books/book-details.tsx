@@ -134,7 +134,7 @@ export function BookDetails({ id }: { id: string }) {
         description: `“${book.title}” is no longer listed.`,
       });
       setDeleteOpen(false);
-      router.push("/manage-books");
+      router.push("/my-books");
     } catch (error) {
       toast.error("Couldn't remove this book", {
         description: errorMessage(error),

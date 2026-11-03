@@ -16,8 +16,9 @@ const exploreLinks = [
 ];
 
 const accountLinks = [
+  { href: "/profile", label: "Profile" },
   { href: "/my-borrows", label: "My borrows" },
-  { href: "/manage-books", label: "Manage my books" },
+  { href: "/my-books", label: "My books" },
   { href: "/login", label: "Sign in" },
   { href: "/register", label: "Create a library card" },
 ];
