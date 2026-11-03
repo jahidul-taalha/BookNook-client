@@ -328,7 +328,7 @@ export function Navbar() {
           <AlertDialogHeader>
             <AlertDialogTitle>Leave the reading room?</AlertDialogTitle>
             <AlertDialogDescription>
-              You'll be signed out on this device. Your books and borrows stay safely
+              You’ll be signed out on this device. Your books and borrows stay safely
               on the shelves.
             </AlertDialogDescription>
           </AlertDialogHeader>

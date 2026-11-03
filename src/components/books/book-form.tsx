@@ -296,7 +296,7 @@ export function BookForm({ mode, book }: BookFormProps) {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Paste a direct image URL or upload a file. If you leave this blank, we'll
+            Paste a direct image URL or upload a file. If you leave this blank, we’ll
             use a shelf illustration for the category.
           </p>
         </div>
