@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowLeftIcon, QuoteIcon, SparklesIcon } from "lucide-react";
-import { BrandMark } from "@/components/site/brand-mark";
 
 const spines = [
   "bg-accent/80",
@@ -81,10 +80,7 @@ export function AuthShell({
       </aside>
 
       <section className="flex flex-col">
-        <div className="flex items-center justify-between border-b border-border/60 px-4 py-4 sm:px-6 lg:border-0 lg:px-10 lg:pt-8">
-          <div className="lg:hidden">
-            <BrandMark />
-          </div>
+        <div className="hidden items-center justify-between px-4 py-4 sm:px-6 lg:flex lg:border-0 lg:px-10 lg:pt-8">
           <Link
             href="/"
             className="ml-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
