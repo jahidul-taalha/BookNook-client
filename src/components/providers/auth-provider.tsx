@@ -13,6 +13,7 @@ import { displayNameFromEmail } from "@/lib/format";
 const TOKEN_KEY = "booknook:token";
 const USER_KEY = "booknook:user";
 const NAMES_KEY = "booknook:names";
+const TOKEN_ROUTE = "/api/token";
 
 export interface AuthUser {
   id: string;
@@ -37,33 +38,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function base64Url(value: string) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-function createDemoToken(user: AuthUser) {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const header = base64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = base64Url(
-    JSON.stringify({
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-      iat: issuedAt,
-      exp: issuedAt + 60 * 60 * 24 * 7,
-    }),
-  );
-  return `${header}.${payload}.booknook-demo`;
-}
-
 function userIdFor(email: string) {
   let hash = 0;
   for (let index = 0; index < email.length; index += 1) {
@@ -80,6 +54,60 @@ function readNames(): Record<string, string> {
   } catch {
     return {};
   }
+}
+
+function decodeTokenPayload(token: string) {
+  const encoded = token.split(".")[1];
+  if (!encoded) return null;
+  try {
+    const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+    return JSON.parse(atob(padded)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function isUsableToken(token: string | null) {
+  if (!token) return false;
+  const parts = token.split(".");
+  if (parts.length !== 3 || parts[2] === "booknook-demo") return false;
+  const payload = decodeTokenPayload(token);
+  return (
+    typeof payload?.exp === "number" &&
+    payload.exp * 1000 > Date.now() + 60_000
+  );
+}
+
+async function requestSignedToken(user: AuthUser) {
+  const response = await fetch(TOKEN_ROUTE, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: user.email,
+      name: user.name,
+      sub: user.id,
+    }),
+    cache: "no-store",
+  });
+
+  const payload = (await response.json().catch(() => null)) as {
+    token?: unknown;
+    message?: unknown;
+  } | null;
+
+  if (!response.ok || typeof payload?.token !== "string") {
+    throw new Error(
+      typeof payload?.message === "string"
+        ? payload.message
+        : "We couldn't sign your library card. Please try again.",
+    );
+  }
+
+  return payload.token;
 }
 
 function readSession(): { user: AuthUser | null; token: string | null } {
@@ -114,10 +142,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(session.user);
     setToken(session.token);
     setIsLoading(false);
+
+    if (!session.user || isUsableToken(session.token)) return;
+
+    let active = true;
+    requestSignedToken(session.user)
+      .then((nextToken) => {
+        if (!active) return;
+        window.localStorage.setItem(TOKEN_KEY, nextToken);
+        setToken(nextToken);
+      })
+      .catch(() => {
+        // Keep the stored session; API calls will show the sign-in error.
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const persist = useCallback((nextUser: AuthUser) => {
-    const nextToken = createDemoToken(nextUser);
+  const persist = useCallback(async (nextUser: AuthUser) => {
+    const nextToken = await requestSignedToken(nextUser);
     window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
     window.localStorage.setItem(TOKEN_KEY, nextToken);
     setUser(nextUser);
