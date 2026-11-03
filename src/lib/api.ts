@@ -42,7 +42,7 @@ function friendlyMessage(status: number) {
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   if (!API_URL) {
     throw new ApiError(
-      "The library service isn't connected yet. Add NEXT_PUBLIC_API_URL to your environment to load live data.",
+      "The library desk is reconnecting. Our shelves will be back as soon as the service is ready — please check in again shortly.",
     );
   }
 
@@ -54,46 +54,73 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers.Authorization = `Bearer ${options.token}`;
   }
 
-  let response: Response;
+  const controller = new AbortController();
+  const callerSignal = options.signal;
+  let timedOut = false;
+
+  const forwardAbort = () => controller.abort();
+  if (callerSignal) {
+    if (callerSignal.aborted) {
+      controller.abort();
+    } else {
+      callerSignal.addEventListener("abort", forwardAbort);
+    }
+  }
+
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, 20_000);
+
   try {
-    response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(`${API_URL}${path}`, {
       method: options.method ?? "GET",
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       cache: "no-store",
-      signal: options.signal,
+      signal: controller.signal,
     });
+
+    const text = await response.text();
+    let payload: unknown = null;
+    if (text) {
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = null;
+      }
+    }
+
+    if (!response.ok) {
+      const message =
+        payload &&
+        typeof payload === "object" &&
+        "message" in payload &&
+        typeof (payload as { message?: unknown }).message === "string"
+          ? (payload as { message: string }).message
+          : friendlyMessage(response.status);
+      throw new ApiError(message, response.status);
+    }
+
+    return payload as T;
   } catch (error) {
+    if (error instanceof ApiError) throw error;
+    if (callerSignal?.aborted) throw error;
+    if (timedOut) {
+      throw new ApiError(
+        "The library service is taking longer than usual. Please try again in a moment.",
+      );
+    }
     if (error instanceof DOMException && error.name === "AbortError") {
       throw error;
     }
     throw new ApiError(
       "We couldn't reach the library service. Check your connection and try again.",
     );
+  } finally {
+    clearTimeout(timeout);
+    callerSignal?.removeEventListener("abort", forwardAbort);
   }
-
-  const text = await response.text();
-  let payload: unknown = null;
-  if (text) {
-    try {
-      payload = JSON.parse(text);
-    } catch {
-      payload = null;
-    }
-  }
-
-  if (!response.ok) {
-    const message =
-      payload &&
-      typeof payload === "object" &&
-      "message" in payload &&
-      typeof (payload as { message?: unknown }).message === "string"
-        ? (payload as { message: string }).message
-        : friendlyMessage(response.status);
-    throw new ApiError(message, response.status);
-  }
-
-  return payload as T;
 }
 
 function listFrom<T>(payload: unknown, keys: string[]): T[] {
