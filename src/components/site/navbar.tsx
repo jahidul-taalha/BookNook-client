@@ -84,6 +84,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
                 className={cn(
                   "rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
                   isActive(link.href)
@@ -99,6 +100,7 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-current={isActive(link.href) ? "page" : undefined}
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
                       isActive(link.href)
@@ -224,6 +226,7 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-current={isActive(link.href) ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
                       "flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium",
@@ -241,6 +244,7 @@ export function Navbar() {
                       <Link
                         key={link.href}
                         href={link.href}
+                        aria-current={isActive(link.href) ? "page" : undefined}
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           "flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium",
