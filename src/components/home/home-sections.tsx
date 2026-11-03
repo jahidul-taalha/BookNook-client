@@ -8,6 +8,7 @@ import {
   SearchIcon,
   SparklesIcon,
 } from "lucide-react";
+import { CuratedCover } from "@/components/home/curated-cover";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Container } from "@/components/site/container";
 import { SectionHeading } from "@/components/site/section-heading";
@@ -143,17 +144,13 @@ export function HomeSections() {
                   href={`/books?search=${encodeURIComponent(book.title)}`}
                   className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-soft"
                 >
-                  <div className="relative aspect-[2/3] overflow-hidden bg-secondary">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={book.image}
-                      alt={`Cover of ${book.title}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  <div className="relative overflow-hidden bg-secondary">
+                    <CuratedCover
+                      title={book.title}
+                      author={book.author}
+                      category={book.category}
+                      className="rounded-none border-0 shadow-none transition-transform duration-500 group-hover:scale-[1.03]"
                     />
-                    <span className="absolute top-3 left-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                      {book.category}
-                    </span>
                   </div>
                   <div className="flex flex-1 flex-col gap-1 p-4">
                     <h3 className="line-clamp-2 font-serif text-lg leading-snug font-semibold text-card-foreground">
@@ -180,7 +177,7 @@ export function HomeSections() {
               <QuoteIcon className="mx-auto size-8 text-accent" />
               <blockquote className="font-serif text-2xl leading-snug font-medium text-foreground sm:text-3xl">
                 “I came in for one mystery and left with three neighbours who now
-                trade books with me every month. That's the whole point.”
+                trade books with me every month. That’s the whole point.”
               </blockquote>
               <figcaption className="text-sm font-medium text-muted-foreground">
                 Mira Patel — borrower, shelf volunteer, and chronic re-reader
@@ -212,7 +209,7 @@ export function HomeSections() {
                     Your shelf has room for one more story.
                   </h2>
                   <p className="text-sm leading-relaxed text-primary-foreground/80 sm:text-base">
-                    Add a book you've finished, borrow something you've been curious
+                    Add a book you’ve finished, borrow something you’ve been curious
                     about, and help a small library feel a little more alive.
                   </p>
                 </div>

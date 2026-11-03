@@ -12,6 +12,7 @@ import {
   QuoteIcon,
   SparklesIcon,
 } from "lucide-react";
+import { CuratedCover } from "@/components/home/curated-cover";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Container } from "@/components/site/container";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ export function Hero() {
         className="absolute inset-y-0 right-0 hidden w-1/3 bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--secondary)_65%,transparent))] lg:block"
       />
       <Container className="relative grid gap-12 py-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-16 lg:py-20">
-        <FadeIn className="space-y-7">
+        <FadeIn className="min-w-0 space-y-7">
           <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/80 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-primary shadow-sm backdrop-blur-sm">
             <SparklesIcon className="size-3.5 text-accent" />
             A neighbourhood library, online
@@ -46,7 +47,7 @@ export function Hero() {
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               BookNook is a small shared library for curious neighbours. Add a book
-              you love, borrow something new, and return it when you're ready to let
+               you love, borrow something new, and return it when you’re ready to let
               the next reader in.
             </p>
           </div>
@@ -81,12 +82,12 @@ export function Hero() {
           </dl>
         </FadeIn>
 
-        <FadeIn delay={0.15} y={24} className="relative">
+        <FadeIn delay={0.15} y={24} className="relative min-w-0">
           <div
             aria-hidden
             className="absolute -inset-6 rounded-[2.5rem] bg-primary/5 blur-2xl"
           />
-          <div className="relative overflow-hidden rounded-[2rem] border border-border/80 bg-card p-4 shadow-soft sm:p-5">
+          <div className="relative min-w-0 overflow-hidden rounded-[2rem] border border-border/80 bg-card p-4 shadow-soft sm:p-5">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-xs font-semibold tracking-[0.22em] text-accent uppercase">
                 On the nightstand
@@ -110,12 +111,11 @@ export function Hero() {
                 <SwiperSlide key={slide.title}>
                   <div className="grid gap-5 sm:grid-cols-[0.72fr_1.28fr] sm:items-center">
                     <div className="relative mx-auto w-full max-w-40 sm:max-w-none">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={slide.image}
-                        alt={`Cover of ${slide.title}`}
-                        className="cover-shadow w-full rounded-xl object-cover"
-                        style={{ aspectRatio: "2 / 3" }}
+                      <CuratedCover
+                        title={slide.title}
+                        author={slide.author}
+                        category={slide.category}
+                        className="cover-shadow"
                       />
                     </div>
                     <div className="space-y-3">
