@@ -18,15 +18,11 @@ export function RelatedBooks({
   currentId: string;
 }) {
   const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(category));
 
   useEffect(() => {
-    if (!category) {
-      setLoading(false);
-      return;
-    }
+    if (!category) return;
     const controller = new AbortController();
-    setLoading(true);
     getBooks({ category, limit: 8 }, controller.signal)
       .then((result) => {
         setBooks(result.filter((book) => book._id !== currentId).slice(0, 4));
@@ -40,6 +36,7 @@ export function RelatedBooks({
     return () => controller.abort();
   }, [category, currentId]);
 
+  if (!category) return null;
   if (!loading && books.length === 0) return null;
 
   return (

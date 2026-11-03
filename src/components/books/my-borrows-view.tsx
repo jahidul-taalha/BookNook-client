@@ -50,7 +50,6 @@ export function MyBorrowsView() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setStatus("loading");
     getBorrows(token, controller.signal)
       .then((result) => {
         setBorrows(result);
@@ -64,7 +63,10 @@ export function MyBorrowsView() {
     return () => controller.abort();
   }, [token, attempt]);
 
-  const retry = useCallback(() => setAttempt((value) => value + 1), []);
+  const retry = useCallback(() => {
+    setStatus("loading");
+    setAttempt((value) => value + 1);
+  }, []);
 
   const active = useMemo(
     () => borrows.filter((borrow) => !borrow.returnDate),
@@ -331,7 +333,7 @@ export function MyBorrowsView() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               This marks the book as returned and makes it available to the next
-              reader. Make sure it's back on the shelf first.
+              reader. Make sure it’s back on the shelf first.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -56,7 +56,6 @@ export function BooksExplorer() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setStatus("loading");
     getBooks({ search, category, sort }, controller.signal)
       .then((result) => {
         setBooks(result);
@@ -70,7 +69,10 @@ export function BooksExplorer() {
     return () => controller.abort();
   }, [search, category, sort, attempt]);
 
-  const retry = useCallback(() => setAttempt((value) => value + 1), []);
+  const retry = useCallback(() => {
+    setStatus("loading");
+    setAttempt((value) => value + 1);
+  }, []);
 
   const hasFilters = search.length > 0 || category !== "All";
 
@@ -200,7 +202,7 @@ export function BooksExplorer() {
         {status === "error" ? (
           <ErrorState
             title="We can't reach the catalogue"
-            description={`${message} The shelves will reappear as soon as the library service is back.`}
+            description={message}
             onRetry={retry}
           />
         ) : null}

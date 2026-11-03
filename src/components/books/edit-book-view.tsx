@@ -24,7 +24,6 @@ export function EditBookView({ id }: { id: string }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    setStatus("loading");
     getBook(id, token, controller.signal)
       .then((result) => {
         setBook(result);
@@ -38,7 +37,10 @@ export function EditBookView({ id }: { id: string }) {
     return () => controller.abort();
   }, [id, token, attempt]);
 
-  const retry = useCallback(() => setAttempt((value) => value + 1), []);
+  const retry = useCallback(() => {
+    setStatus("loading");
+    setAttempt((value) => value + 1);
+  }, []);
 
   const ownerEmail = book?.addedBy?.email?.toLowerCase();
   const canEdit =

@@ -48,7 +48,6 @@ export function ManageBooksView() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setStatus("loading");
     getBooks({ sort: "newest" }, controller.signal)
       .then((result) => {
         setBooks(result);
@@ -62,7 +61,10 @@ export function ManageBooksView() {
     return () => controller.abort();
   }, [attempt]);
 
-  const retry = useCallback(() => setAttempt((value) => value + 1), []);
+  const retry = useCallback(() => {
+    setStatus("loading");
+    setAttempt((value) => value + 1);
+  }, []);
 
   const mine = useMemo(() => {
     const email = user?.email?.toLowerCase();

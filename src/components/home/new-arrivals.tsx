@@ -21,12 +21,12 @@ export function NewArrivals() {
   const [attempt, setAttempt] = useState(0);
 
   const load = useCallback(() => {
+    setStatus("loading");
     setAttempt((value) => value + 1);
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
-    setStatus("loading");
     getBooks({ sort: "newest", limit: 8 }, controller.signal)
       .then((result) => {
         setBooks(result);
