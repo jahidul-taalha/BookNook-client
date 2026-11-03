@@ -110,6 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const session = readSession();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate the demo session after mount
     setUser(session.user);
     setToken(session.token);
     setIsLoading(false);
