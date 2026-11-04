@@ -18,7 +18,7 @@ function HeroFallback() {
           <div className="h-14 w-4/5 animate-pulse rounded-xl bg-muted" />
           <div className="h-11 w-48 animate-pulse rounded-full bg-muted" />
         </div>
-        <div className="h-80 animate-pulse rounded-[2rem] bg-muted" />
+        <div className="h-80 animate-pulse `rounded-[2rem]` bg-muted" />
       </div>
     </div>
   );
