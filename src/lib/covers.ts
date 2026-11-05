@@ -1,21 +1,49 @@
 const CATEGORY_COVERS: Record<string, string> = {
-  Fiction:
-    "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=900&q=80",
-  Science:
-    "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80",
-  History:
-    "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=900&q=80",
-  Kids: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=900&q=80",
-  Others:
-    "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80",
+  Fiction: "/covers/fiction.svg",
+  Science: "/covers/science.svg",
+  History: "/covers/history.svg",
+  Kids: "/covers/kids.svg",
+  Others: "/covers/others.svg",
 };
 
 export const DEFAULT_COVER = CATEGORY_COVERS.Others;
+
+const DIRECT_IMAGE_HOSTS = new Set([
+  "images.unsplash.com",
+  "plus.unsplash.com",
+  "i.ibb.co",
+  "i.imgur.com",
+  "images.pexels.com",
+  "cdn.pixabay.com",
+  "upload.wikimedia.org",
+  "raw.githubusercontent.com",
+  "lh3.googleusercontent.com",
+]);
+
+const IMAGE_EXTENSION = /\.(jpe?g|png|webp|gif|avif|svg|bmp)$/i;
+
+export function isDirectImageUrl(value?: string | null): boolean {
+  const raw = value?.trim();
+  if (!raw) return false;
+
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return false;
+  }
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+  if (IMAGE_EXTENSION.test(url.pathname)) return true;
+  return DIRECT_IMAGE_HOSTS.has(url.hostname.toLowerCase());
+}
 
 export function coverForCategory(category?: string | null) {
   return (category && CATEGORY_COVERS[category]) || DEFAULT_COVER;
 }
 
 export function coverFor(book: { image?: string | null; category?: string | null }) {
-  return book.image?.trim() || coverForCategory(book.category);
+  return isDirectImageUrl(book.image)
+    ? book.image!.trim()
+    : coverForCategory(book.category);
 }
