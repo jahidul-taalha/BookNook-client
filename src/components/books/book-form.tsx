@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createBook, errorMessage, updateBook } from "@/lib/api";
-import { coverForCategory } from "@/lib/covers";
+import { coverForCategory, isDirectImageUrl } from "@/lib/covers";
 import {
   BOOK_CATEGORIES,
   type Book,
@@ -51,14 +51,31 @@ export function BookForm({ mode, book }: BookFormProps) {
     (book?.category as BookCategory) ?? "Fiction",
   );
   const [description, setDescription] = useState(book?.description ?? "");
-  const [image, setImage] = useState(book?.image ?? "");
+  const storedImage = mode === "edit" ? book?.image ?? "" : "";
+  const [image, setImage] = useState(
+    isDirectImageUrl(storedImage) ? storedImage.trim() : "",
+  );
+  const [imageError, setImageError] = useState("");
   const [totalCopies, setTotalCopies] = useState(
     String(book?.totalCopies ?? 1),
   );
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const preview = image.trim() || coverForCategory(category);
+  const preview = isDirectImageUrl(image)
+    ? image.trim()
+    : coverForCategory(category);
+
+  const resetForm = () => {
+    setTitle("");
+    setAuthor("");
+    setCategory("Fiction");
+    setDescription("");
+    setImage("");
+    setImageError("");
+    setTotalCopies("1");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const handleUpload = async (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -99,6 +116,7 @@ export function BookForm({ mode, book }: BookFormProps) {
         throw new Error(payload.error?.message || "The image host rejected the upload.");
       }
       setImage(url);
+      setImageError("");
       toast.success("Cover uploaded", {
         description: "Your book is looking good on the shelf.",
       });
@@ -144,6 +162,13 @@ export function BookForm({ mode, book }: BookFormProps) {
       });
       return;
     }
+    const trimmedImage = image.trim();
+    if (trimmedImage && !isDirectImageUrl(trimmedImage)) {
+      setImageError(
+        "That link is a page, not an image. Paste a direct image link ending in .jpg, .png or .webp (for example from images.unsplash.com or i.ibb.co), or use Upload cover.",
+      );
+      return;
+    }
     if (!token) {
       toast.error("Your session has ended", {
         description: "Please sign in again before saving this book.",
@@ -155,7 +180,7 @@ export function BookForm({ mode, book }: BookFormProps) {
       title: trimmedTitle,
       author: trimmedAuthor,
       category,
-      image: image.trim(),
+      image: trimmedImage,
       description: trimmedDescription,
       totalCopies: copies,
     };
@@ -173,6 +198,7 @@ export function BookForm({ mode, book }: BookFormProps) {
         toast.success("Book added to the shelves", {
           description: `“${trimmedTitle}” is ready for its first borrower.`,
         });
+        resetForm();
         router.push(created?._id ? `/books/${created._id}` : "/my-books");
       }
     } catch (error) {
@@ -269,9 +295,14 @@ export function BookForm({ mode, book }: BookFormProps) {
               <Input
                 id="image"
                 value={image}
-                onChange={(event) => setImage(event.target.value)}
-                placeholder="https://images.unsplash.com/…"
+                onChange={(event) => {
+                  setImage(event.target.value);
+                  if (imageError) setImageError("");
+                }}
+                placeholder="https://example.com/cover.jpg"
                 className="h-11 rounded-xl pr-3 pl-10"
+                aria-invalid={imageError ? true : undefined}
+                aria-describedby={imageError ? "image-error" : undefined}
               />
             </div>
             <input
@@ -295,9 +326,16 @@ export function BookForm({ mode, book }: BookFormProps) {
               {uploading ? "Uploading…" : "Upload cover"}
             </Button>
           </div>
+          {imageError ? (
+            <p id="image-error" role="alert" className="text-xs font-medium text-destructive">
+              {imageError}
+            </p>
+          ) : null}
           <p className="text-xs text-muted-foreground">
-            Paste a direct image URL or upload a file. If you leave this blank, we’ll
-            use a shelf illustration for the category.
+            Paste a direct image link (one ending in .jpg, .png or .webp, such as
+            images.unsplash.com or i.ibb.co) or upload a file — page links like
+            unsplash.com/photos/… won’t work. Leave it blank and we’ll use a shelf
+            illustration for the category.
           </p>
         </div>
 
