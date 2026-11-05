@@ -1,5 +1,7 @@
 # BookNook
 
+Live Site: https://book-nook-client-six.vercel.app
+
 A warm, community-run online library frontend. Neighbours can add books, borrow
 them, and return them for the next reader.
 
@@ -10,8 +12,15 @@ them, and return them for the next reader.
 - View book details, availability, and the neighbour who shared each copy.
 - Add and edit books with a live cover preview and optional ImgBB image upload.
 - Borrow a book, return it from **My Borrows**, and keep track of what is out.
+- Borrowing follows available copies: each copy can only be out to one reader at a
+  time, so there is no double borrow.
 - Manage the books you have shared with the library.
-- Light and dark themes, responsive navigation, accessible focus states, and
+- Private routes (`/add-book`, `/my-books`, `/my-borrows`, `/profile`) wait for the
+  session to finish loading, then redirect to sign-in with a return link.
+- JWT-protected API: `GET /books` is public, every other request sends
+  `Authorization: Bearer <token>`.
+- Swiper-powered hero slider with curated covers on the home page.
+- Light and dark themes, responsive design, accessible focus states, and
   reduced-motion support.
 - Friendly loading, empty, offline, 404, and error states — the UI never crashes
   when the API is unavailable.
