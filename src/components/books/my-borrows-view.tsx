@@ -31,7 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { errorMessage, getBorrows, returnBorrow } from "@/lib/api";
-import { coverForCategory } from "@/lib/covers";
+import { coverForCategory, isDirectImageUrl } from "@/lib/covers";
 import { formatDate } from "@/lib/format";
 import type { Borrow } from "@/lib/types";
 import { cn } from "cn";
@@ -243,7 +243,11 @@ export function MyBorrowsView() {
                       />
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={borrow.bookImage || coverForCategory()}
+                        src={
+                          isDirectImageUrl(borrow.bookImage)
+                            ? borrow.bookImage.trim()
+                            : coverForCategory()
+                        }
                         alt={`Cover of ${borrow.bookTitle}`}
                         className="h-28 w-20 object-cover"
                         onError={(event) => {
